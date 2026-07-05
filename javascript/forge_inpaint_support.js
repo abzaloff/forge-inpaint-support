@@ -62,6 +62,22 @@
         return inputId ? document.getElementById(inputId) : null;
     }
 
+    function recenterScribbleIndicator(root, event) {
+        const uuid = canvasUuid(root);
+        if (!uuid) return;
+
+        const container = document.getElementById(`container_${uuid}`);
+        const indicator = document.getElementById(`scribbleIndicator_${uuid}`);
+        if (!container || !indicator) return;
+
+        const rect = container.getBoundingClientRect();
+        const width = indicator.offsetWidth;
+        const height = indicator.offsetHeight;
+
+        indicator.style.left = `${event.clientX - rect.left - width / 2}px`;
+        indicator.style.top = `${event.clientY - rect.top - height / 2}px`;
+    }
+
     function clamp(value, input) {
         const min = Number(input.min || 0);
         const max = Number(input.max || 100);
@@ -127,6 +143,7 @@
             if (!root) return;
 
             if (!adjustRange(root, tool, event)) return;
+            if (tool === "width") recenterScribbleIndicator(root, event);
 
             lastCanvasRoot = root;
             event.preventDefault();
